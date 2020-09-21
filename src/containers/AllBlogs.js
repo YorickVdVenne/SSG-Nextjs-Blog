@@ -20,7 +20,7 @@ export default function AllBlogs() {
   useEffect(() => {
     onLoadFilter()
     onLoadPagination()
-  }, [router.query])
+  }, [router])
 
   function onLoadFilter() {
     const subjects = data.taxonomyTermQuery.entities.map(subject => subject.entityLabel)
@@ -33,17 +33,19 @@ export default function AllBlogs() {
       setActiveFilter(urlSubject)
     } else {
       setActiveFilter("")
+      setFilteredBlog(data.nodeQuery.entities)
     }
   }
 
   function onLoadPagination() {
     const urlPage = router.query.page;
-    console.log(totalPages)
     if(Number(urlPage) <= totalPages) {
       setActivePage(Number(urlPage - 1))
     } else if(Number(urlPage) > totalPages) {
       setActivePage(0)
       router.push(`/blogs?subject=&page=1`)
+    } else {
+      setActivePage(0)
     }
   }
   
@@ -75,14 +77,14 @@ export default function AllBlogs() {
   }
   function nextButton() {
       if(activePage == totalPages - 1) {
-        return (<button className="pagination-button" disabled>Next</button>)
+        return (<button className="pagination-button-disabled" disabled>Next</button>)
       } else {
         return (<button onClick={(e)=> paginationHandler(e)} value="next" className="pagination-button">Next</button>)
       }
   }
   function prevButton() {
       if(activePage == 0) {
-        return (<button className="pagination-button" disabled>Prev</button>)
+        return (<button className="pagination-button-disabled" disabled>Prev</button>)
       } else {
         return (<button onClick={(e)=> paginationHandler(e)} value="prev" className="pagination-button">Prev</button>)
       }
@@ -97,9 +99,9 @@ export default function AllBlogs() {
                   <div className="blogpage-title">BLOGS</div>
                   <div className="filter-title">FILTER ON SUBJECT:</div>
                   <div className="text-center pb-3">
-                    <button onClick={() => {setFilteredBlog(data.nodeQuery.entities), filterResetHandler()}} className={`more-blogs-btn mr-2 ${activeFilter === '' ? 'active': ''}`} value="">All</button>
+                    <button onClick={() => {setFilteredBlog(data.nodeQuery.entities), filterResetHandler()}} className={`filter-blogs-btn mr-2 ${activeFilter === '' ? 'active': ''}`} value="">All</button>
                     {data.taxonomyTermQuery.entities.map((subject, index) => (
-                      <button key={index} onClick={(e)=> filterHandler(e)} className={`more-blogs-btn mr-1 mt-1 ${activeFilter === subject.entityLabel ? 'active': ''}`} value={subject.entityLabel}>{subject.entityLabel}</button>
+                      <button key={index} onClick={(e)=> filterHandler(e)} className={`filter-blogs-btn mr-1 mt-1 ${activeFilter === subject.entityLabel ? 'active': ''}`} value={subject.entityLabel}>{subject.entityLabel}</button>
                     ))}
                   </div>
               </div> 
@@ -115,20 +117,19 @@ export default function AllBlogs() {
               >
               <div className="col-lg-12">
                     {paginatedBlogs.map((blog, index) => (
-                      <div key={index} className="card" blog-subject={blog.fieldBlogSubject[0].entity.entityLabel}>
-                        <div className="card-image">
-                          <img src={blog.fieldBlogImage[0].url} className="img-fluid" alt=""/>
-                        </div>
-                        <div className="card-div pt-3">
-                            <h3 className="card-title pb-3">{blog.entityLabel}</h3>
-                            <div className="button-container pt-3">
-                              <Link href="/blog/[nid]" as={`/blog/${blog.entityId}`}>
-                                <a className="btn-solid-reg page-scroll">Read More</a>
-                              </Link>
-                            </div> 
-                            <p className="card-text pt-2 text-center"><small className="text-muted">Posted on {DateTime.fromISO(blog.entityCreated).toFormat('dd LLL yyyy')}</small></p>
-                        </div>
-                      </div>
+                      <Link key={index} href="/blog/[nid]" as={`/blog/${blog.entityId}`}>
+                        <a>
+                          <div className="card mr-3" blog-subject={blog.fieldBlogSubject[0].entity.entityLabel}>
+                            <div className="card-image">
+                              <img src={blog.fieldBlogImage[0].url} className="img-fluid" alt=""/>
+                            </div>
+                            <div className="card-div pt-3">
+                                <h3 className="card-title">{blog.entityLabel}</h3>
+                                <p className="card-text pt-2 text-center"><small className="text-muted">{DateTime.fromISO(blog.entityCreated).toFormat('dd LLL yyyy')}</small></p>
+                            </div>
+                          </div>
+                        </a>
+                      </Link>
                     ))}
               </div> 
               </CSSTransition>

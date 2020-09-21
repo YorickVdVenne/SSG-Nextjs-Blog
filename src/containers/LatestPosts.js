@@ -18,24 +18,23 @@ export default function LatestPosts() {
         <div className="row">
           <div className="col-lg-12">
             {data.nodeQuery.entities.map((blog, index) => (
-              <div key={index} className="card">
-                <div className="card-image">
-                  <img src={blog.fieldBlogImage[0].url} className="img-fluid" alt=""/>
+              <Link key={index} href="/blog/[nid]" as={`/blog/${blog.entityId}`}>
+              <a>
+                <div className="card mr-3" blog-subject={blog.fieldBlogSubject[0].entity.entityLabel}>
+                  <div className="card-image">
+                    <img src={blog.fieldBlogImage[0].url} className="img-fluid" alt=""/>
+                  </div>
+                  <div className="card-div pt-3">
+                      <h3 className="card-title pb-3">{blog.entityLabel}</h3>
+                      <p className="card-text pt-2 text-center"><small className="text-muted">{DateTime.fromISO(blog.entityCreated).toFormat('dd LLL yyyy')}</small></p>
+                  </div>
                 </div>
-                <div className="card-div pt-3">
-                    <h3 className="card-title pb-3">{blog.entityLabel}</h3>
-                    <div className="button-container pt-3">
-                      <Link href={`/blog/${blog.entityId}`}>
-                        <a className="btn-solid-reg page-scroll">Read More</a>
-                      </Link>
-                    </div> 
-            <p className="card-text pt-2 text-center"><small className="text-muted">Posted on {DateTime.fromISO(blog.entityCreated).toFormat('dd LLL yyyy')}</small></p>
-                </div>
-              </div>
+              </a>
+            </Link>
             ))}
             <div className="text-center">
               <Link href="/blogs?page=1">
-                <a className="more-blogs-btn">Check out more Blogs</a>
+                <a className="more-blogs-btn">SEE MORE</a>
               </Link>
             </div>
           </div> 

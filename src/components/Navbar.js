@@ -23,7 +23,7 @@ export default function Navbar() {
                         
                     </li>
                     <li className="nav-item">
-                        <Link href="/blogs?page=1">
+                        <Link href="/blogs">
                             <a className="nav-link page-scroll">BLOG</a>
                         </Link>
                     </li>
